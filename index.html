@@ -21,10 +21,8 @@
         .question input {
             margin-right: 10px;
         }
-        #result {
+        #result, #languageSelection, #questionContainer, #feedback {
             display: none;
-            font-size: 20px;
-            font-weight: bold;
         }
         .feedback {
             margin-top: 20px;
@@ -41,60 +39,126 @@
             font-size: 14px;
             margin-top: 20px;
         }
+        .button-container {
+            margin-top: 20px;
+        }
+        .button-container button {
+            margin-right: 10px;
+        }
+        .flag {
+            width: 20px;
+            height: 15px;
+            vertical-align: middle;
+        }
     </style>
 </head>
 <body>
     <h1>Quiz - Alternative Protein Club</h1>
     <p class="info">Dette er Alternative Protein Club ved NTNU.</p>
+
+    <!-- Sprachauswahl -->
+    <div id="languageSelection">
+        <h2>Velg språk / Choose language</h2>
+        <button onclick="setLanguage('no')"><img src="norway-flag.png" alt="Norwegian flag" class="flag"> Norsk</button>
+        <button onclick="setLanguage('en')"><img src="uk-flag.png" alt="English flag" class="flag"> English</button>
+    </div>
+
+    <!-- Quiz -->
     <form id="quizForm">
         <div id="questionContainer" class="question">
             <!-- Fragen werden hier dynamisch eingefügt -->
         </div>
-        <button type="button" id="nextButton" onclick="checkAnswer()">Sjekk</button>
+        <div class="button-container">
+            <button type="button" id="checkButton" onclick="checkAnswer()">Sjekk</button>
+            <button type="button" id="nextButton" onclick="nextQuestion()">Neste spørsmål</button>
+        </div>
     </form>
     <div id="result"></div>
     <div id="feedback" class="feedback"></div>
 
     <script>
-        const questions = [
-            {
-                question: "Hvilken av disse proteinkildene regnes ikke som et «komplett protein» fordi den ikke inneholder alle av de ni aminosyrene som er essensielle?",
-                answers: {
-                    a: "Soya",
-                    b: "Pistasjenøtter",
-                    c: "Quinoa",
-                    d: "Erter"
+        const questions = {
+            no: [
+                {
+                    question: "Hvilken av disse proteinkildene regnes ikke som et «komplett protein» fordi den ikke inneholder alle av de ni aminosyrene som er essensielle?",
+                    answers: {
+                        a: "Soya",
+                        b: "Pistasjenøtter",
+                        c: "Quinoa",
+                        d: "Erter"
+                    },
+                    correct: "Pistasjenøtter"
                 },
-                correct: "Pistasjenøtter"
-            },
-            {
-                question: "Hvilken teknologi brukes til å produsere laboratoriekjøtt?",
-                answers: {
-                    a: "Genteknologi",
-                    b: "Celledyrking",
-                    c: "Fermentering",
-                    d: "3D-printing"
+                {
+                    question: "Hvilken teknologi brukes til å produsere laboratoriekjøtt?",
+                    answers: {
+                        a: "Genteknologi",
+                        b: "Celledyrking",
+                        c: "Fermentering",
+                        d: "3D-printing"
+                    },
+                    correct: "Celledyrking"
                 },
-                correct: "Celledyrking"
-            },
-            {
-                question: "Hvilket av disse begrepene beskriver et kjøttalternativ som er basert på sopp?",
-                answers: {
-                    a: "Tofu",
-                    b: "Seitan",
-                    c: "Tempeh",
-                    d: "Mycoprotein"
+                {
+                    question: "Hvilket av disse begrepene beskriver et kjøttalternativ som er basert på sopp?",
+                    answers: {
+                        a: "Tofu",
+                        b: "Seitan",
+                        c: "Tempeh",
+                        d: "Mycoprotein"
+                    },
+                    correct: "Mycoprotein"
+                }
+            ],
+            en: [
+                {
+                    question: "Which of these protein sources is not considered a 'complete protein' because it does not contain all nine essential amino acids?",
+                    answers: {
+                        a: "Soy",
+                        b: "Pistachios",
+                        c: "Quinoa",
+                        d: "Peas"
+                    },
+                    correct: "Pistachios"
                 },
-                correct: "Mycoprotein"
-            }
-        ];
+                {
+                    question: "Which technology is used to produce lab-grown meat?",
+                    answers: {
+                        a: "Genetic Engineering",
+                        b: "Cell Culturing",
+                        c: "Fermentation",
+                        d: "3D Printing"
+                    },
+                    correct: "Cell Culturing"
+                },
+                {
+                    question: "Which of these terms describes a meat alternative based on fungi?",
+                    answers: {
+                        a: "Tofu",
+                        b: "Seitan",
+                        c: "Tempeh",
+                        d: "Mycoprotein"
+                    },
+                    correct: "Mycoprotein"
+                }
+            ]
+        };
 
         let currentQuestionIndex = 0;
         let correctAnswersCount = 0;
+        let language = 'no'; // Default language
+
+        function showElement(id) {
+            document.getElementById(id).style.display = 'block';
+        }
+
+        function hideElement(id) {
+            document.getElementById(id).style.display = 'none';
+        }
 
         function loadQuestion(index) {
             const questionContainer = document.getElementById('questionContainer');
-            const question = questions[index];
+            const question = questions[language][index];
             
             questionContainer.innerHTML = `
                 <h2>${question.question}</h2>
@@ -113,7 +177,7 @@
             
             if (selectedAnswer) {
                 const answerValue = selectedAnswer.value;
-                const correctAnswer = questions[currentQuestionIndex].correct;
+                const correctAnswer = questions[language][currentQuestionIndex].correct;
 
                 if (answerValue === correctAnswer) {
                     selectedAnswer.parentElement.classList.add('correct');
@@ -126,33 +190,47 @@
                 }
                 resultDiv.style.display = 'block';
 
-                document.getElementById('nextButton').style.display = 'none';
-                setTimeout(() => {
-                    resultDiv.style.display = 'none';
-                    document.getElementById('nextButton').style.display = 'block';
-                    currentQuestionIndex++;
-                    if (currentQuestionIndex < questions.length) {
-                        loadQuestion(currentQuestionIndex);
-                    } else {
-                        showFinalFeedback();
-                    }
-                }, 2000); // Warte 2 Sekunden bevor die nächste Frage geladen wird
+                hideElement('checkButton');
+                showElement('nextButton');
             } else {
                 resultDiv.innerHTML = 'Vennligst velg et svar.';
                 resultDiv.style.display = 'block';
             }
         }
 
+        function nextQuestion() {
+            currentQuestionIndex++;
+            if (currentQuestionIndex < questions[language].length) {
+                loadQuestion(currentQuestionIndex);
+                hideElement('nextButton');
+                showElement('checkButton');
+                document.getElementById('result').style.display = 'none';
+            } else {
+                showFinalFeedback();
+            }
+        }
+
         function showFinalFeedback() {
             const feedbackDiv = document.getElementById('feedback');
             feedbackDiv.innerHTML = `
-                <p><b>Du har besvart ${correctAnswersCount} av ${questions.length} spørsmål riktig.</b></p>
+                <p><b>Du har besvart ${correctAnswersCount} av ${questions[language].length} spørsmål riktig.</b></p>
                 <p>Du er på god vei til å bli en ekspert på alternative proteiner.</p>
             `;
+            showElement('feedback');
+            hideElement('checkButton');
+            hideElement('nextButton');
         }
 
-        // Initialisiere das Quiz mit der ersten Frage
-        loadQuestion(currentQuestionIndex);
+        function setLanguage(lang) {
+            language = lang;
+            hideElement('languageSelection');
+            showElement('questionContainer');
+            loadQuestion(currentQuestionIndex);
+            showElement('checkButton');
+        }
+
+        // Sprachauswahl anzeigen
+        showElement('languageSelection');
     </script>
 </body>
 </html>
