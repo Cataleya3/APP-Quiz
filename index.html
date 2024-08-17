@@ -3,13 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quiz</title>
+    <title>Quiz - Alternative Protein Club</title>
     <style>
         body {
             font-family: Arial, sans-serif;
             padding: 20px;
             max-width: 600px;
             margin: auto;
+            background-color: #f0f4f8;
         }
         .question {
             margin-bottom: 20px;
@@ -25,61 +26,123 @@
             font-size: 20px;
             font-weight: bold;
         }
+        .feedback {
+            margin-top: 20px;
+            font-size: 16px;
+        }
+        .correct {
+            color: green;
+        }
+        .incorrect {
+            color: red;
+        }
+        .info {
+            color: #6a7b8c; /* Graublau */
+            font-size: 14px;
+            margin-top: 20px;
+        }
     </style>
 </head>
 <body>
-    <h1>Quiz</h1>
+    <h1>Quiz - Alternative Protein Club</h1>
+    <p class="info">Dette er Alternative Protein Club ved NTNU.</p>
     <form id="quizForm">
-        <div class="question">
-            <h2>Hvilken av disse proteinkildene regnes ikke som et «komplett protein» fordi den ikke inneholder alle av de ni aminosyrene som er essensielle?</h2>
-            <label><input type="radio" name="q1" value="Soya"> Soya</label><br>
-            <label><input type="radio" name="q1" value="Pistasjenøtter"> Pistasjenøtter</label><br>
-            <label><input type="radio" name="q1" value="Quinoa"> Quinoa</label><br>
-            <label><input type="radio" name="q1" value="Erter"> Erter</label>
+        <div id="questionContainer" class="question">
+            <!-- Fragen werden hier dynamisch eingefügt -->
         </div>
-        <div class="question">
-            <h2>Hvilken teknologi brukes til å produsere laboratoriekjøtt?</h2>
-            <label><input type="radio" name="q2" value="Genteknologi"> Genteknologi</label><br>
-            <label><input type="radio" name="q2" value="Celledyrking"> Celledyrking</label><br>
-            <label><input type="radio" name="q2" value="Fermentering"> Fermentering</label><br>
-            <label><input type="radio" name="q2" value="3D-printing"> 3D-printing</label>
-        </div>
-        <div class="question">
-            <h2>Hvilket av disse begrepene beskriver et kjøttalternativ som er basert på sopp?</h2>
-            <label><input type="radio" name="q3" value="Tofu"> Tofu</label><br>
-            <label><input type="radio" name="q3" value="Seitan"> Seitan</label><br>
-            <label><input type="radio" name="q3" value="Tempeh"> Tempeh</label><br>
-            <label><input type="radio" name="q3" value="Mycoprotein"> Mycoprotein</label>
-        </div>
-        <button type="button" onclick="checkAnswers()">Sjekk</button>
+        <button type="button" onclick="nextQuestion()">Sjekk</button>
     </form>
     <div id="result"></div>
 
     <script>
-        function checkAnswers() {
-            const answers = {
-                q1: 'Pistasjenøtter',
-                q2: 'Celledyrking',
-                q3: 'Mycoprotein'
-            };
-
-            let correct = true;
-            for (let key in answers) {
-                const selected = document.querySelector(`input[name="${key}"]:checked`);
-                if (!selected || selected.value !== answers[key]) {
-                    correct = false;
-                    break;
-                }
+        const questions = [
+            {
+                question: "Hvilken av disse proteinkildene regnes ikke som et «komplett protein» fordi den ikke inneholder alle av de ni aminosyrene som er essensielle?",
+                answers: {
+                    a: "Soya",
+                    b: "Pistasjenøtter",
+                    c: "Quinoa",
+                    d: "Erter"
+                },
+                correct: "Pistasjenøtter"
+            },
+            {
+                question: "Hvilken teknologi brukes til å produsere laboratoriekjøtt?",
+                answers: {
+                    a: "Genteknologi",
+                    b: "Celledyrking",
+                    c: "Fermentering",
+                    d: "3D-printing"
+                },
+                correct: "Celledyrking"
+            },
+            {
+                question: "Hvilket av disse begrepene beskriver et kjøttalternativ som er basert på sopp?",
+                answers: {
+                    a: "Tofu",
+                    b: "Seitan",
+                    c: "Tempeh",
+                    d: "Mycoprotein"
+                },
+                correct: "Mycoprotein"
             }
+        ];
 
-            const resultDiv = document.getElementById('result');
-            if (correct) {
-                resultDiv.innerHTML = 'Gratulerer! Du har besvart alle spørsmålene riktig!';
-            } else {
-                resultDiv.innerHTML = 'Dessverre, ikke alle svarene er riktige. Vennligst prøv igjen.';
-            }
-            resultDiv.style.display = 'block';
+        let currentQuestionIndex = 0;
+
+        function loadQuestion(index) {
+            const questionContainer = document.getElementById('questionContainer');
+            const question = questions[index];
+            
+            questionContainer.innerHTML = `
+                <h2>${question.question}</h2>
+                ${Object.keys(question.answers).map(key => `
+                    <label>
+                        <input type="radio" name="answer" value="${question.answers[key]}"> ${question.answers[key]}
+                    </label><br>
+                `).join('')}
+            `;
         }
+
+        function nextQuestion() {
+            const selectedAnswer = document.querySelector('input[name="answer"]:checked');
+            const resultDiv = document.getElementById('result');
+            
+            if (selectedAnswer) {
+                const answerValue = selectedAnswer.value;
+                const correctAnswer = questions[currentQuestionIndex].correct;
+
+                if (answerValue === correctAnswer) {
+                    selectedAnswer.parentElement.classList.add('correct');
+                    resultDiv.innerHTML = 'Riktig!';
+                    resultDiv.style.display = 'block';
+                } else {
+                    document.querySelector(`input[value="${correctAnswer}"]`).parentElement.classList.add('correct');
+                    selectedAnswer.parentElement.classList.add('incorrect');
+                    resultDiv.innerHTML = `Feil. Den riktige svaret er: ${correctAnswer}`;
+                    resultDiv.style.display = 'block';
+                }
+
+                currentQuestionIndex++;
+                if (currentQuestionIndex < questions.length) {
+                    setTimeout(() => {
+                        resultDiv.style.display = 'none';
+                        loadQuestion(currentQuestionIndex);
+                    }, 2000); // Warte 2 Sekunden bevor die nächste Frage geladen wird
+                } else {
+                    setTimeout(() => {
+                        resultDiv.innerHTML = 'Gratulerer! Du har besvart alle spørsmålene!';
+                        resultDiv.style.display = 'block';
+                    }, 2000); // Warte 2 Sekunden bevor die Abschlussnachricht angezeigt wird
+                }
+            } else {
+                resultDiv.innerHTML = 'Vennligst velg et svar.';
+                resultDiv.style.display = 'block';
+            }
+        }
+
+        // Initialisiere das Quiz mit der ersten Frage
+        loadQuestion(currentQuestionIndex);
     </script>
 </body>
 </html>
