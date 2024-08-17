@@ -50,9 +50,10 @@
         <div id="questionContainer" class="question">
             <!-- Fragen werden hier dynamisch eingefügt -->
         </div>
-        <button type="button" onclick="nextQuestion()">Sjekk</button>
+        <button type="button" id="nextButton" onclick="checkAnswer()">Sjekk</button>
     </form>
     <div id="result"></div>
+    <div id="feedback" class="feedback"></div>
 
     <script>
         const questions = [
@@ -89,6 +90,7 @@
         ];
 
         let currentQuestionIndex = 0;
+        let correctAnswersCount = 0;
 
         function loadQuestion(index) {
             const questionContainer = document.getElementById('questionContainer');
@@ -104,9 +106,10 @@
             `;
         }
 
-        function nextQuestion() {
+        function checkAnswer() {
             const selectedAnswer = document.querySelector('input[name="answer"]:checked');
             const resultDiv = document.getElementById('result');
+            const feedbackDiv = document.getElementById('feedback');
             
             if (selectedAnswer) {
                 const answerValue = selectedAnswer.value;
@@ -115,30 +118,37 @@
                 if (answerValue === correctAnswer) {
                     selectedAnswer.parentElement.classList.add('correct');
                     resultDiv.innerHTML = 'Riktig!';
-                    resultDiv.style.display = 'block';
+                    correctAnswersCount++;
                 } else {
                     document.querySelector(`input[value="${correctAnswer}"]`).parentElement.classList.add('correct');
                     selectedAnswer.parentElement.classList.add('incorrect');
                     resultDiv.innerHTML = `Feil. Den riktige svaret er: ${correctAnswer}`;
-                    resultDiv.style.display = 'block';
                 }
+                resultDiv.style.display = 'block';
 
-                currentQuestionIndex++;
-                if (currentQuestionIndex < questions.length) {
-                    setTimeout(() => {
-                        resultDiv.style.display = 'none';
+                document.getElementById('nextButton').style.display = 'none';
+                setTimeout(() => {
+                    resultDiv.style.display = 'none';
+                    document.getElementById('nextButton').style.display = 'block';
+                    currentQuestionIndex++;
+                    if (currentQuestionIndex < questions.length) {
                         loadQuestion(currentQuestionIndex);
-                    }, 2000); // Warte 2 Sekunden bevor die nächste Frage geladen wird
-                } else {
-                    setTimeout(() => {
-                        resultDiv.innerHTML = 'Gratulerer! Du har besvart alle spørsmålene!';
-                        resultDiv.style.display = 'block';
-                    }, 2000); // Warte 2 Sekunden bevor die Abschlussnachricht angezeigt wird
-                }
+                    } else {
+                        showFinalFeedback();
+                    }
+                }, 2000); // Warte 2 Sekunden bevor die nächste Frage geladen wird
             } else {
                 resultDiv.innerHTML = 'Vennligst velg et svar.';
                 resultDiv.style.display = 'block';
             }
+        }
+
+        function showFinalFeedback() {
+            const feedbackDiv = document.getElementById('feedback');
+            feedbackDiv.innerHTML = `
+                <p><b>Du har besvart ${correctAnswersCount} av ${questions.length} spørsmål riktig.</b></p>
+                <p>Du er på god vei til å bli en ekspert på alternative proteiner.</p>
+            `;
         }
 
         // Initialisiere das Quiz mit der ersten Frage
