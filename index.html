@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            max-width: 600px;
+            margin: auto;
+        }
+        .question {
+            margin-bottom: 20px;
+        }
+        .question h2 {
+            margin: 0;
+        }
+        .question input {
+            margin-right: 10px;
+        }
+        #result {
+            display: none;
+            font-size: 20px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <h1>Quiz</h1>
+    <form id="quizForm">
+        <div class="question">
+            <h2>Hvilken av disse proteinkildene regnes ikke som et «komplett protein» fordi den ikke inneholder alle av de ni aminosyrene som er essensielle?</h2>
+            <label><input type="radio" name="q1" value="Soya"> Soya</label><br>
+            <label><input type="radio" name="q1" value="Pistasjenøtter"> Pistasjenøtter</label><br>
+            <label><input type="radio" name="q1" value="Quinoa"> Quinoa</label><br>
+            <label><input type="radio" name="q1" value="Erter"> Erter</label>
+        </div>
+        <div class="question">
+            <h2>Hvilken teknologi brukes til å produsere laboratoriekjøtt?</h2>
+            <label><input type="radio" name="q2" value="Genteknologi"> Genteknologi</label><br>
+            <label><input type="radio" name="q2" value="Celledyrking"> Celledyrking</label><br>
+            <label><input type="radio" name="q2" value="Fermentering"> Fermentering</label><br>
+            <label><input type="radio" name="q2" value="3D-printing"> 3D-printing</label>
+        </div>
+        <div class="question">
+            <h2>Hvilket av disse begrepene beskriver et kjøttalternativ som er basert på sopp?</h2>
+            <label><input type="radio" name="q3" value="Tofu"> Tofu</label><br>
+            <label><input type="radio" name="q3" value="Seitan"> Seitan</label><br>
+            <label><input type="radio" name="q3" value="Tempeh"> Tempeh</label><br>
+            <label><input type="radio" name="q3" value="Mycoprotein"> Mycoprotein</label>
+        </div>
+        <button type="button" onclick="checkAnswers()">Sjekk</button>
+    </form>
+    <div id="result"></div>
+
+    <script>
+        function checkAnswers() {
+            const answers = {
+                q1: 'Pistasjenøtter',
+                q2: 'Celledyrking',
+                q3: 'Mycoprotein'
+            };
+
+            let correct = true;
+            for (let key in answers) {
+                const selected = document.querySelector(`input[name="${key}"]:checked`);
+                if (!selected || selected.value !== answers[key]) {
+                    correct = false;
+                    break;
+                }
+            }
+
+            const resultDiv = document.getElementById('result');
+            if (correct) {
+                resultDiv.innerHTML = 'Gratulerer! Du har besvart alle spørsmålene riktig!';
+            } else {
+                resultDiv.innerHTML = 'Dessverre, ikke alle svarene er riktige. Vennligst prøv igjen.';
+            }
+            resultDiv.style.display = 'block';
+        }
+    </script>
+</body>
+</html>
