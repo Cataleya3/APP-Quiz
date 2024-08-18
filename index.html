@@ -48,7 +48,7 @@
             background-color: #f8d7da;
             border-color: #f5c6cb;
         }
-        #next-button {
+        #sjekk-button, #next-button {
             margin-top: 20px;
             padding: 10px 20px;
             background-color: #005f5f;
@@ -122,7 +122,7 @@
 
         let currentQuestionIndex = 0;
         let correctAnswers = 0;
-        let selectedLanguage = 'no';
+        let selectedLanguage = '';
 
         document.getElementById('norwegian-flag').onclick = () => startQuiz('no');
         document.getElementById('english-flag').onclick = () => startQuiz('en');
@@ -175,7 +175,11 @@
 
         function showResult() {
             document.getElementById('quiz-content').style.display = 'none';
-            document.getElementById('result').textContent = `Du svarte riktig på ${correctAnswers} av ${questions[selectedLanguage].length} spørsmål. Du er på god vei til å bli en ekspert på alternative proteiner!`;
+            const totalQuestions = questions[selectedLanguage].length;
+            const resultMessage = selectedLanguage === 'no' 
+                ? `Du svarte riktig på ${correctAnswers} av ${totalQuestions} spørsmål. Du er på god vei til å bli en ekspert på alternative proteiner!` 
+                : `You answered ${correctAnswers} out of ${totalQuestions} questions correctly. You're well on your way to becoming an expert on alternative proteins!`;
+            document.getElementById('result').textContent = resultMessage;
         }
     </script>
 </body>
