@@ -134,16 +134,18 @@
                 }
             }
             document.getElementById('check-button').style.display = 'none';
-            document.getElementById('next-button').style.display = 'inline-block';
+
+            // Nur den "Neste" Button anzeigen, wenn noch Fragen übrig sind
+            if (currentQuestionIndex < questions[currentLanguage].length - 1) {
+                document.getElementById('next-button').style.display = 'inline-block';
+            } else {
+                showResult();
+            }
         }
 
         function nextQuestion() {
             currentQuestionIndex++;
-            if (currentQuestionIndex < questions[currentLanguage].length) {
-                showQuestion();
-            } else {
-                showResult();
-            }
+            showQuestion();
         }
         
         function showResult() {
