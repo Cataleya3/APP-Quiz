@@ -3,229 +3,180 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quiz - Alternative Protein Club</title>
+    <title>Alternative Protein Quiz</title>
     <style>
         body {
             font-family: Arial, sans-serif;
+            text-align: center;
             padding: 20px;
+            background-color: #f4f4f4;
+        }
+        #quiz-container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             max-width: 600px;
             margin: auto;
-            background-color: #f0f4f8;
         }
-        .question {
-            margin-bottom: 20px;
-        }
-        .question h2 {
-            margin: 0;
-        }
-        .question input {
-            margin-right: 10px;
-        }
-        #result, #languageSelection, #questionContainer, #feedback {
-            display: none;
-        }
-        .feedback {
-            margin-top: 20px;
-            font-size: 16px;
-        }
-        .correct {
-            color: green;
-        }
-        .incorrect {
-            color: red;
-        }
-        .info {
-            color: #6a7b8c; /* Graublau */
-            font-size: 14px;
-            margin-top: 20px;
-        }
-        .button-container {
-            margin-top: 20px;
-        }
-        .button-container button {
-            margin-right: 10px;
+        h1 {
+            color: #005f5f;
         }
         .flag {
-            width: 20px;
-            height: 15px;
-            vertical-align: middle;
+            width: 30px;
+            height: auto;
+            cursor: pointer;
+            margin: 0 10px;
+        }
+        .question {
+            margin: 20px 0;
+        }
+        .answer {
+            display: block;
+            margin: 10px 0;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            cursor: pointer;
+            background-color: #f9f9f9;
+        }
+        .answer.correct {
+            background-color: #d4edda;
+            border-color: #c3e6cb;
+        }
+        .answer.incorrect {
+            background-color: #f8d7da;
+            border-color: #f5c6cb;
+        }
+        #next-button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #005f5f;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            display: none;
+        }
+        #result {
+            margin-top: 20px;
+            font-weight: bold;
+            color: #005f5f;
         }
     </style>
 </head>
 <body>
-    <h1>Quiz - Alternative Protein Club</h1>
-    <p class="info">Dette er Alternative Protein Club ved NTNU.</p>
-
-    <!-- Sprachauswahl -->
-    <div id="languageSelection">
-        <h2>Velg språk / Choose language</h2>
-        <button onclick="setLanguage('no')"><img src="norway-flag.png" alt="Norwegian flag" class="flag"> Norsk</button>
-        <button onclick="setLanguage('en')"><img src="uk-flag.png" alt="English flag" class="flag"> English</button>
+    <div id="quiz-container">
+        <h1>Alternative Protein Club NTNU</h1>
+        <div id="language-selection">
+            <p>Velg språk / Choose language</p>
+            <img src="https://upload.wikimedia.org/wikipedia/commons/d/d9/Flag_of_Norway.svg" class="flag" id="norwegian-flag" alt="Norwegian">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/a/a4/Flag_of_the_United_States.svg" class="flag" id="english-flag" alt="English">
+        </div>
+        
+        <div id="quiz-content" style="display: none;">
+            <div id="question-container"></div>
+            <button id="sjekk-button">Sjekk</button>
+            <button id="next-button">Neste spørsmål</button>
+        </div>
+        <div id="result"></div>
     </div>
-
-    <!-- Quiz -->
-    <form id="quizForm">
-        <div id="questionContainer" class="question">
-            <!-- Fragen werden hier dynamisch eingefügt -->
-        </div>
-        <div class="button-container">
-            <button type="button" id="checkButton" onclick="checkAnswer()">Sjekk</button>
-            <button type="button" id="nextButton" onclick="nextQuestion()">Neste spørsmål</button>
-        </div>
-    </form>
-    <div id="result"></div>
-    <div id="feedback" class="feedback"></div>
 
     <script>
         const questions = {
             no: [
                 {
                     question: "Hvilken av disse proteinkildene regnes ikke som et «komplett protein» fordi den ikke inneholder alle av de ni aminosyrene som er essensielle?",
-                    answers: {
-                        a: "Soya",
-                        b: "Pistasjenøtter",
-                        c: "Quinoa",
-                        d: "Erter"
-                    },
-                    correct: "Pistasjenøtter"
+                    answers: ["Soya", "Pistasjenøtter", "Quinoa", "Erter"],
+                    correct: 1
                 },
                 {
                     question: "Hvilken teknologi brukes til å produsere laboratoriekjøtt?",
-                    answers: {
-                        a: "Genteknologi",
-                        b: "Celledyrking",
-                        c: "Fermentering",
-                        d: "3D-printing"
-                    },
-                    correct: "Celledyrking"
+                    answers: ["Genteknologi", "Celledyrking", "Fermentering", "3D-printing"],
+                    correct: 1
                 },
                 {
                     question: "Hvilket av disse begrepene beskriver et kjøttalternativ som er basert på sopp?",
-                    answers: {
-                        a: "Tofu",
-                        b: "Seitan",
-                        c: "Tempeh",
-                        d: "Mycoprotein"
-                    },
-                    correct: "Mycoprotein"
+                    answers: ["Tofu", "Seitan", "Tempeh", "Mycoprotein"],
+                    correct: 3
                 }
             ],
             en: [
                 {
                     question: "Which of these protein sources is not considered a 'complete protein' because it does not contain all nine essential amino acids?",
-                    answers: {
-                        a: "Soy",
-                        b: "Pistachios",
-                        c: "Quinoa",
-                        d: "Peas"
-                    },
-                    correct: "Pistachios"
+                    answers: ["Soy", "Pistachios", "Quinoa", "Peas"],
+                    correct: 1
                 },
                 {
                     question: "Which technology is used to produce lab-grown meat?",
-                    answers: {
-                        a: "Genetic Engineering",
-                        b: "Cell Culturing",
-                        c: "Fermentation",
-                        d: "3D Printing"
-                    },
-                    correct: "Cell Culturing"
+                    answers: ["Genetic engineering", "Cell cultivation", "Fermentation", "3D printing"],
+                    correct: 1
                 },
                 {
                     question: "Which of these terms describes a meat alternative based on fungi?",
-                    answers: {
-                        a: "Tofu",
-                        b: "Seitan",
-                        c: "Tempeh",
-                        d: "Mycoprotein"
-                    },
-                    correct: "Mycoprotein"
+                    answers: ["Tofu", "Seitan", "Tempeh", "Mycoprotein"],
+                    correct: 3
                 }
             ]
         };
 
         let currentQuestionIndex = 0;
-        let correctAnswersCount = 0;
-        let language = 'no'; // Default language
+        let correctAnswers = 0;
+        let selectedLanguage = 'no';
 
-        function showElement(id) {
-            document.getElementById(id).style.display = 'block';
+        document.getElementById('norwegian-flag').onclick = () => startQuiz('no');
+        document.getElementById('english-flag').onclick = () => startQuiz('en');
+
+        function startQuiz(language) {
+            selectedLanguage = language;
+            document.getElementById('language-selection').style.display = 'none';
+            document.getElementById('quiz-content').style.display = 'block';
+            showQuestion();
         }
 
-        function hideElement(id) {
-            document.getElementById(id).style.display = 'none';
+        function showQuestion() {
+            const questionData = questions[selectedLanguage][currentQuestionIndex];
+            const questionContainer = document.getElementById('question-container');
+
+            questionContainer.innerHTML = `<div class="question">${questionData.question}</div>`;
+            questionData.answers.forEach((answer, index) => {
+                const answerElement = document.createElement('div');
+                answerElement.className = 'answer';
+                answerElement.textContent = answer;
+                answerElement.onclick = () => checkAnswer(index);
+                questionContainer.appendChild(answerElement);
+            });
+            document.getElementById('sjekk-button').style.display = 'block';
+            document.getElementById('next-button').style.display = 'none';
         }
 
-        function loadQuestion(index) {
-            const questionContainer = document.getElementById('questionContainer');
-            const question = questions[language][index];
-            
-            questionContainer.innerHTML = `
-                <h2>${question.question}</h2>
-                ${Object.keys(question.answers).map(key => `
-                    <label>
-                        <input type="radio" name="answer" value="${question.answers[key]}"> ${question.answers[key]}
-                    </label><br>
-                `).join('')}
-            `;
-        }
-
-        function checkAnswer() {
-            const selectedAnswer = document.querySelector('input[name="answer"]:checked');
-            const resultDiv = document.getElementById('result');
-            const feedbackDiv = document.getElementById('feedback');
-            
-            if (selectedAnswer) {
-                const answerValue = selectedAnswer.value;
-                const correctAnswer = questions[language][currentQuestionIndex].correct;
-
-                if (answerValue === correctAnswer) {
-                    selectedAnswer.parentElement.classList.add('correct');
-                    resultDiv.innerHTML = (language === 'no') ? 'Riktig!' : 'Correct!';
-                    correctAnswersCount++;
-                } else {
-                    document.querySelector(`input[value="${correctAnswer}"]`).parentElement.classList.add('correct');
-                    selectedAnswer.parentElement.classList.add('incorrect');
-                    resultDiv.innerHTML = (language === 'no') ? `Feil. Den riktige svaret er: ${correctAnswer}` : `Incorrect. The correct answer is: ${correctAnswer}`;
-                }
-                resultDiv.style.display = 'block';
-
-                showElement('nextButton');
+        function checkAnswer(selectedIndex) {
+            const questionData = questions[selectedLanguage][currentQuestionIndex];
+            const answers = document.getElementsByClassName('answer');
+            if (selectedIndex === questionData.correct) {
+                answers[selectedIndex].classList.add('correct');
+                correctAnswers++;
             } else {
-                resultDiv.innerHTML = (language === 'no') ? 'Vennligst velg et svar.' : 'Please select an answer.';
-                resultDiv.style.display = 'block';
+                answers[selectedIndex].classList.add('incorrect');
+                answers[questionData.correct].classList.add('correct');
             }
+            document.getElementById('sjekk-button').style.display = 'none';
+            document.getElementById('next-button').style.display = 'block';
         }
 
-        function nextQuestion() {
+        document.getElementById('next-button').onclick = () => {
             currentQuestionIndex++;
-            if (currentQuestionIndex < questions[language].length) {
-                loadQuestion(currentQuestionIndex);
-                hideElement('nextButton');
-                document.getElementById('result').style.display = 'none';
+            if (currentQuestionIndex < questions[selectedLanguage].length) {
+                showQuestion();
             } else {
-                showFinalFeedback();
+                showResult();
             }
-        }
+        };
 
-        function showFinalFeedback() {
-            const feedbackDiv = document.getElementById('feedback');
-            feedbackDiv.innerHTML = `
-                <p><b>${(language === 'no') ? 'Du har besvart' : 'You answered'} ${correctAnswersCount} ${(language === 'no') ? 'av' : 'out of'} ${questions[language].length} ${(language === 'no') ? 'spørsmål riktig.' : 'questions correctly.'}</b></p>
-                <p>${(language === 'no') ? 'Du er på god vei til å bli en ekspert på alternative proteiner.' : 'You are on your way to becoming an expert on alternative proteins.'}</p>
-            `;
-            showElement('feedback');
-            hideElement('checkButton');
-            hideElement('nextButton');
+        function showResult() {
+            document.getElementById('quiz-content').style.display = 'none';
+            document.getElementById('result').textContent = `Du svarte riktig på ${correctAnswers} av ${questions[selectedLanguage].length} spørsmål. Du er på god vei til å bli en ekspert på alternative proteiner!`;
         }
-
-        function setLanguage(lang) {
-            language = lang;
-            hideElement('languageSelection');
-            showElement('questionContainer');
-            loadQuestion(currentQuestionIndex);
-            showElement('checkButton');
-        }
-
-        // Sprachauswahl anzeigen
-        showElement('languageSelection');
+    </script>
+</body>
+</html>
