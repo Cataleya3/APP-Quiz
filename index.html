@@ -176,10 +176,17 @@
         };
 
         function showResult() {
-            document.getElementById('question-container').innerHTML = `<h2>${currentLanguage === 'no' ? 'Du svarte riktig på ' : 'You answered correctly '} ${score} ${currentLanguage === 'no' ? 'av 3 spørsmål.' : 'out of 3 questions.'}</h2>`;
-            document.getElementById('question-container').innerHTML += `<p><strong>${currentLanguage === 'no' ? 'Du er på god vei til å bli en ekspert på alternative proteiner.' : 'You are doing well on your way to becoming an expert on alternative proteins.'}</strong></p>`;
+            document.getElementById('quiz-content').style.display = 'none';
+            const totalQuestions = questions[selectedLanguage].length;
+            const resultMessage = selectedLanguage === 'no' 
+                ? `Du svarte riktig på ${correctAnswers} av ${totalQuestions} spørsmål. Du er på god vei til å bli en ekspert på alternative proteiner!` 
+                : `You answered ${correctAnswers} out of ${totalQuestions} questions correctly. You're well on your way to becoming an expert on alternative proteins!`;
+            document.getElementById('result').textContent = resultMessage;
             document.getElementById('question-container').innerHTML += `<p>${currentLanguage === 'no' ? 'Finne ut mer om The Alt Protein Project Norge: ' : 'Find out more about The Alt Protein Project Norge: '}<a href="http://alternativeproteiner.no/">The Alt Protein Project Norge</a></p>`;
+
         }
+        
+
     </script>
 </body>
 </html>
