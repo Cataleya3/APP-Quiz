@@ -181,19 +181,18 @@
 
                 if (answerValue === correctAnswer) {
                     selectedAnswer.parentElement.classList.add('correct');
-                    resultDiv.innerHTML = 'Riktig!';
+                    resultDiv.innerHTML = (language === 'no') ? 'Riktig!' : 'Correct!';
                     correctAnswersCount++;
                 } else {
                     document.querySelector(`input[value="${correctAnswer}"]`).parentElement.classList.add('correct');
                     selectedAnswer.parentElement.classList.add('incorrect');
-                    resultDiv.innerHTML = `Feil. Den riktige svaret er: ${correctAnswer}`;
+                    resultDiv.innerHTML = (language === 'no') ? `Feil. Den riktige svaret er: ${correctAnswer}` : `Incorrect. The correct answer is: ${correctAnswer}`;
                 }
                 resultDiv.style.display = 'block';
 
-                hideElement('checkButton');
                 showElement('nextButton');
             } else {
-                resultDiv.innerHTML = 'Vennligst velg et svar.';
+                resultDiv.innerHTML = (language === 'no') ? 'Vennligst velg et svar.' : 'Please select an answer.';
                 resultDiv.style.display = 'block';
             }
         }
@@ -203,7 +202,6 @@
             if (currentQuestionIndex < questions[language].length) {
                 loadQuestion(currentQuestionIndex);
                 hideElement('nextButton');
-                showElement('checkButton');
                 document.getElementById('result').style.display = 'none';
             } else {
                 showFinalFeedback();
@@ -213,8 +211,8 @@
         function showFinalFeedback() {
             const feedbackDiv = document.getElementById('feedback');
             feedbackDiv.innerHTML = `
-                <p><b>Du har besvart ${correctAnswersCount} av ${questions[language].length} spørsmål riktig.</b></p>
-                <p>Du er på god vei til å bli en ekspert på alternative proteiner.</p>
+                <p><b>${(language === 'no') ? 'Du har besvart' : 'You answered'} ${correctAnswersCount} ${(language === 'no') ? 'av' : 'out of'} ${questions[language].length} ${(language === 'no') ? 'spørsmål riktig.' : 'questions correctly.'}</b></p>
+                <p>${(language === 'no') ? 'Du er på god vei til å bli en ekspert på alternative proteiner.' : 'You are on your way to becoming an expert on alternative proteins.'}</p>
             `;
             showElement('feedback');
             hideElement('checkButton');
@@ -231,6 +229,3 @@
 
         // Sprachauswahl anzeigen
         showElement('languageSelection');
-    </script>
-</body>
-</html>
